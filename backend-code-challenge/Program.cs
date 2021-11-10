@@ -6,7 +6,7 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Backend challenge. Please leave this tab open while using the program.");
 
 
 app.MapGet("/api/supervisors", async () =>
