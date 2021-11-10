@@ -1,3 +1,7 @@
+// Author: Michael Corrigan
+
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -35,6 +39,38 @@ app.MapGet("/api/supervisors", async () =>
 
 });
 
+app.MapPost("/api/submit", async context =>
+{
+    // if content-type header in http request is not 'application/json' then return error
+    if (!context.Request.HasJsonContentType())
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.UnsupportedMediaType;
+        return;
+    }
+
+    var submission = await context.Request.ReadFromJsonAsync<Submit>();
+    Console.WriteLine(
+          $"FirstName: {submission.firstName}\nLastName: {submission.lastName}\nSupervisor: {submission.supervisor}\nEmail: {submission.email}\nPhone: {submission.phoneNumber}"
+          );
+
+    // Model validation must be done manually using this method.
+    // ref:https://docs.microsoft.com/en-us/aspnet/core/web-api/route-to-code?view=aspnetcore-6.0#notable-missing-features-compared-to-web-api
+
+    if ((submission.firstName == null || submission.firstName == "") ||
+        (submission.lastName == null || submission.lastName == "") ||
+        (submission.supervisor == null || submission.supervisor == ""))
+    {
+        //Response 400 -  Bad Request
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        return;
+    }
+
+
+    context.Response.StatusCode = StatusCodes.Status201Created;
+    return;
+
+});
+
 app.Run();
 
 
@@ -46,4 +82,16 @@ public class Managers
     public string identificationNumber { get; set; }
     public string firstName { get; set; }
     public string lastName { get; set; }
+}
+
+public class Submit
+{
+    [Required]
+    public string supervisor { get; set; }
+    [Required]
+    public string firstName { get; set; }
+    [Required]
+    public string lastName { get; set; }
+    public string phoneNumber { get; set; }
+    public string email { get; set; }
 }
