@@ -3,7 +3,7 @@ Challenge for lightfeather.io
 
 
 Installation
-1. Download the file
+1. Download the project
 2. Bring up a terminal/shell in `backend-code-challenge/backend-code-challenge` (source files)
 3. Run command `docker build -f backend-code-challenge/Dockerfile -t challenge .`
 4. Once the project is built with Docker, run this command `docker run -d -p 1234:80 --name apis challenge`
